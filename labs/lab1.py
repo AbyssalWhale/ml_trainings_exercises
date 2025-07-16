@@ -1,9 +1,10 @@
+import logging
 import torch
 from torch import nn
 from torchvision import transforms
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-import logging
+
 from tools.data import get_mnist_data_sets
 from tools.device import get_device
 
@@ -32,9 +33,14 @@ def lab1() -> None:
         layers = __get_model_layers__()
         model = __compile_model__(device, layers)
         loss_function = nn.CrossEntropyLoss()
-        __train_and_validate_model__(epochs=5, model=model, train_loader=train_loader,
-                                    valid_loader=valid_loader, device=device,
-                                    loss_function=loss_function)
+        __train_and_validate_model__(
+            epochs=5,
+            model=model,
+            train_loader=train_loader,
+            valid_loader=valid_loader,
+            device=device,
+            loss_function=loss_function
+        )
 
         logging.info("PREDICTION")
         prediction = model(image_0_tensor.unsqueeze(0).to(device))

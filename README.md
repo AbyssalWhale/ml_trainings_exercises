@@ -40,7 +40,7 @@ tools/                 # Utilities
   device.py            # Device selection utils
   helper_system.py     # System utils
 requirements.txt       # Python dependencies
-data/                  # MNIST data storage
+data/                  # data storage
 ```
 
 ## 🤝 Contributing
@@ -48,9 +48,6 @@ data/                  # MNIST data storage
 - 📝 Add docstrings and type hints to new functions
 - 🪵 Use logging for all major steps and errors
 - 📬 Submit pull requests with clear descriptions
-
-## 📄 License
-MIT License
 
 ---
 

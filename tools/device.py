@@ -1,8 +1,14 @@
 import logging
+import torch
 
-from sympy.printing.pytorch import torch
 
-
-def get_device():
-    logging.info(f"getting device. Is CUDA available? - {torch.cuda.is_available()}")
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def get_device() -> torch.device:
+    """
+    Returns the best available device (CUDA if available, else CPU).
+    Returns:
+        torch.device: The selected device.
+    """
+    cuda_available = torch.cuda.is_available()
+    device = torch.device("cuda" if cuda_available else "cpu")
+    logging.info(f"Getting device. CUDA available: {cuda_available}. Selected device: {device}")
+    return device

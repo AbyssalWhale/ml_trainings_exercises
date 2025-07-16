@@ -1,11 +1,11 @@
-import logging
 import torch
-import torch.nn as nn
-from tools.data import get_mnist_data_sets
-from tools.device import get_device
+from torch import nn
 from torchvision import transforms
 from torch.optim import Adam
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
+import logging
+from tools.data import get_mnist_data_sets
+from tools.device import get_device
 
 
 def lab1() -> None:
@@ -32,21 +32,16 @@ def lab1() -> None:
         layers = __get_model_layers__()
         model = __compile_model__(device, layers)
         loss_function = nn.CrossEntropyLoss()
-        __train_and_validate_model__(
-            epochs=5,
-            model=model,
-            train_loader=train_loader,
-            valid_loader=valid_loader,
-            device=device,
-            loss_function=loss_function
-        )
+        __train_and_validate_model__(epochs=5, model=model, train_loader=train_loader,
+                                    valid_loader=valid_loader, device=device,
+                                    loss_function=loss_function)
 
         logging.info("PREDICTION")
         prediction = model(image_0_tensor.unsqueeze(0).to(device))
-        logging.info(f"Prediction result as tensor: {prediction}")
-        logging.info(f"Expected class: {image_0_label} Predicted class: {prediction.argmax().item()}")
+        logging.info("Prediction result as tensor: %s", prediction)
+        logging.info("Expected class: %s Predicted class: %s", image_0_label, prediction.argmax().item())
     except Exception as e:
-        logging.error(f"Error in lab1: {e}")
+        logging.error("Error in lab1: %s", e)
         raise
 
 
@@ -59,11 +54,13 @@ def __convert_image_to_tensor__(image) -> tuple:
     trans = transforms.Compose([transforms.ToTensor()])
     tensor = trans(image)
     logging.info(
-        f"Image tensor\nPIL Images have a potential integer range of [0, 255], "
-        f"but the ToTensor class converts it to a float range of [0.0, 1.0].\n"
-        f"Min: {tensor.min()}\nMax: {tensor.max()}\nSize: {tensor.size()}\nDevice: {tensor.device}"
+        "Image tensor\nPIL Images have a potential integer range of [0, 255], "
+        "but the ToTensor class converts it to a float range of [0.0, 1.0].\n"
+        "Min: %s\nMax: %s\nSize: %s\nDevice: %s",
+        tensor.min(), tensor.max(), tensor.size(), tensor.device
     )
     return trans, tensor
+
 
 def __get_model_layers__() -> list:
     """
@@ -80,8 +77,9 @@ def __get_model_layers__() -> list:
         nn.ReLU(),
         nn.Linear(512, n_classes)
     ]
-    logging.info(f"Input size: {input_size} (1*28*28), Classes: {n_classes}, Model layers: {layers}")
+    logging.info("Input size: %d (1*28*28), Classes: %d, Model layers: %s", input_size, n_classes, layers)
     return layers
+
 
 def __compile_model__(device, layers: list) -> nn.Module:
     """
@@ -93,29 +91,24 @@ def __compile_model__(device, layers: list) -> nn.Module:
         model = torch.compile(model)
         logging.info("Model compiled with torch.compile.")
     except Exception as e:
-        logging.warning(f"torch.compile failed: {e}. Using uncompiled model.")
-    logging.info(f"Model device: {next(model.parameters()).device}")
+        logging.warning("torch.compile failed: %s. Using uncompiled model.", e)
+    logging.info("Model device: %s", next(model.parameters()).device)
     return model
 
-def __train_and_validate_model__(epochs: int, model: nn.Module, train_loader: DataLoader, valid_loader: DataLoader, device, loss_function) -> None:
+
+def __train_and_validate_model__(epochs: int, model: nn.Module, train_loader: DataLoader,
+                                 valid_loader: DataLoader, device, loss_function) -> None:
     """
     Trains and validates the model for the specified number of epochs.
     """
     for epoch in range(epochs):
-        logging.info(f"Epoch {epoch+1}/{epochs} - Training")
-        __train_model__(
-            model=model,
-            train_loader=train_loader,
-            device=device,
-            loss_function=loss_function
-        )
-        logging.info(f"Epoch {epoch+1}/{epochs} - Validating")
-        __validate_model__(
-            model=model,
-            valid_loader=valid_loader,
-            device=device,
-            loss_function=loss_function
-        )
+        logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
+        __train_model__(model=model, train_loader=train_loader, device=device,
+                        loss_function=loss_function)
+        logging.info("Epoch %d/%d - Validating", epoch + 1, epochs)
+        __validate_model__(model=model, valid_loader=valid_loader, device=device,
+                           loss_function=loss_function)
+
 
 def __train_model__(model: nn.Module, train_loader: DataLoader, device, loss_function) -> None:
     """
@@ -135,7 +128,8 @@ def __train_model__(model: nn.Module, train_loader: DataLoader, device, loss_fun
         optimizer.step()
         loss += batch_loss.item()
         accuracy += get_batch_accuracy(output, y, train_n)
-    logging.info(f'Train - Loss: {loss:.4f} Accuracy: {accuracy:.4f}')
+    logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
+
 
 def __validate_model__(model: nn.Module, valid_loader: DataLoader, device, loss_function) -> None:
     """
@@ -151,7 +145,8 @@ def __validate_model__(model: nn.Module, valid_loader: DataLoader, device, loss_
             output = model(x)
             loss += loss_function(output, y).item()
             accuracy += get_batch_accuracy(output, y, valid_N)
-    logging.info(f'Valid - Loss: {loss:.4f} Accuracy: {accuracy:.4f}')
+    logging.info('Valid - Loss: %.4f Accuracy: %.4f', loss, accuracy)
+
 
 def get_batch_accuracy(output: torch.Tensor, y: torch.Tensor, N: int) -> float:
     """

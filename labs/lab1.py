@@ -98,10 +98,8 @@ def __compile_model__(device, layers: list) -> nn.Module:
         model = torch.compile(model)
         logging.info("Model compiled with torch.compile.")
     except Exception as e:
-        logging.warning(
-            "torch.compile failed: %s. Using uncompiled model.",
-            e
-        )
+        message =  "torch.compile failed: %s. Using uncompiled model."
+        logging.warning(message,e)
     logging.info(
         "Model device: %s",
         next(model.parameters()).device

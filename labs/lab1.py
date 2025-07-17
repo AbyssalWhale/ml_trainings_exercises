@@ -26,8 +26,10 @@ def lab1() -> None:
         train_set.transform = trans
         valid_set.transform = trans
         batch_size = 32
-        train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
-        valid_loader = DataLoader(valid_set, batch_size=batch_size)
+        loaders = {
+            'train': DataLoader(train_set, batch_size=batch_size, shuffle=True),
+            'valid': DataLoader(valid_set, batch_size=batch_size)
+        }
 
         logging.info("PREPARE TRAIN AND VALIDATE MODEL")
         layers = __get_model_layers__()
@@ -36,8 +38,7 @@ def lab1() -> None:
         __train_and_validate_model__(
             epochs=5,
             model=model,
-            train_loader=train_loader,
-            valid_loader=valid_loader,
+            loaders=loaders,
             device=device,
             loss_function=loss_function
         )
@@ -46,7 +47,7 @@ def lab1() -> None:
         prediction = model(image_0_tensor.unsqueeze(0).to(device))
         logging.info("Prediction result as tensor: %s", prediction)
         logging.info("Expected class: %s Predicted class: %s", image_0_label, prediction.argmax().item())
-    except Exception as e:
+    except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab1: %s", e)
         raise
 
@@ -97,35 +98,46 @@ def __compile_model__(device, layers: list) -> nn.Module:
         model = torch.compile(model)
         logging.info("Model compiled with torch.compile.")
     except Exception as e:
-        logging.warning("torch.compile failed: %s. Using uncompiled model.", e)
-    logging.info("Model device: %s", next(model.parameters()).device)
+        logging.warning(
+            "torch.compile failed: %s. Using uncompiled model.",
+            e
+        )
+    logging.info(
+        "Model device: %s",
+        next(model.parameters()).device
+    )
     return model
 
 
-def __train_and_validate_model__(epochs: int, model: nn.Module, train_loader: DataLoader,
-                                 valid_loader: DataLoader, device, loss_function) -> None:
+def __train_and_validate_model__(epochs: int, model: nn.Module, loaders: dict, device, loss_function) -> None:
     """
     Trains and validates the model for the specified number of epochs.
+    Args:
+        epochs (int): Number of epochs.
+        model (nn.Module): The model to train.
+        loaders (dict): Dictionary with 'train' and 'valid' DataLoader.
+        device: Device to use.
+        loss_function: Loss function.
     """
+    train_loader = loaders['train']
+    valid_loader = loaders['valid']
     for epoch in range(epochs):
         logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
-        __train_model__(model=model, train_loader=train_loader, device=device,
-                        loss_function=loss_function)
+        __train_model__(model=model, loader=train_loader, device=device, loss_function=loss_function)
         logging.info("Epoch %d/%d - Validating", epoch + 1, epochs)
-        __validate_model__(model=model, valid_loader=valid_loader, device=device,
-                           loss_function=loss_function)
+        __validate_model__(model=model, loader=valid_loader, device=device, loss_function=loss_function)
 
 
-def __train_model__(model: nn.Module, train_loader: DataLoader, device, loss_function) -> None:
+def __train_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
     """
     Trains the model for one epoch using the training data loader.
     """
     optimizer = Adam(model.parameters())
-    train_n = len(train_loader.dataset)
+    train_n = len(loader.dataset)
     loss = 0.0
     accuracy = 0.0
     model.train()
-    for x, y in train_loader:
+    for x, y in loader:
         x, y = x.to(device), y.to(device)
         output = model(x)
         optimizer.zero_grad()
@@ -137,16 +149,16 @@ def __train_model__(model: nn.Module, train_loader: DataLoader, device, loss_fun
     logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
 
 
-def __validate_model__(model: nn.Module, valid_loader: DataLoader, device, loss_function) -> None:
+def __validate_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
     """
     Validates the model using the validation data loader.
     """
     loss = 0.0
     accuracy = 0.0
-    valid_N = len(valid_loader.dataset)
+    valid_N = len(loader.dataset)
     model.eval()
     with torch.no_grad():
-        for x, y in valid_loader:
+        for x, y in loader:
             x, y = x.to(device), y.to(device)
             output = model(x)
             loss += loss_function(output, y).item()

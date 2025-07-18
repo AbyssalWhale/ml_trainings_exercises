@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 150
+max-complexity = 10
+exclude = __pycache__,data/MNIST
+statistics = True
+count = True
+show-source = True
+

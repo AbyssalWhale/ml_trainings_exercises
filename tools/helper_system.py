@@ -17,9 +17,9 @@ def get_project_dir() -> str:
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
         if parent_dir == current_dir:
             logging.error("Could not find project root directory.")
-            raise Exception("Could not find project root directory.")
+            raise FileNotFoundError("Could not find project root directory.")
         current_dir = parent_dir
-    logging.info(f"Project root directory found: {current_dir}")
+    logging.info("Project root directory found: %s", current_dir)
     return current_dir
 
 

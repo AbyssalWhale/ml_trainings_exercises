@@ -10,5 +10,5 @@ def get_device() -> torch.device:
     """
     cuda_available = torch.cuda.is_available()
     device = torch.device("cuda" if cuda_available else "cpu")
-    logging.info(f"Getting device. CUDA available: {cuda_available}. Selected device: {device}")
+    logging.info("Getting device. CUDA available: %s. Selected device: %s", cuda_available, device)
     return device

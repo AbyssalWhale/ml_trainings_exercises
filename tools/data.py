@@ -16,7 +16,10 @@ def get_mnist_data_sets() -> tuple:
     try:
         train_set = torchvision.datasets.MNIST(data_path, train=True, download=True)
         valid_set = torchvision.datasets.MNIST(data_path, train=False, download=True)
-        logging.info("Loaded train set size: %d, valid set size: %d", len(train_set), len(valid_set))
+        logging.info(
+            "Loaded train set size: %d, valid set size: %d",
+            len(train_set),
+            len(valid_set))
         return train_set, valid_set
     except Exception as e:
         logging.error("Error loading MNIST datasets: %s", e)

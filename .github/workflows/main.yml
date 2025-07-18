@@ -26,4 +26,4 @@ jobs:
           flake8 labs/ tools/ main.py
       - name: Run pylint (broken references)
         run: |
-          pylint labs/ tools/ main.py --disable=missing-docstring,invalid-name,too-few-public-methods
+          pylint labs/ tools/ main.py --rcfile=.pylintrc --disable=missing-docstring,invalid-name,too-few-public-methods

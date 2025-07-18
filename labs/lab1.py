@@ -1,9 +1,9 @@
 import logging
 import torch
 from torch import nn
-from torchvision import transforms
 from torch.optim import Adam
 from torch.utils.data import DataLoader
+from torchvision import transforms
 
 from tools.data import get_mnist_data_sets
 from tools.device import get_device
@@ -11,7 +11,8 @@ from tools.device import get_device
 
 def lab1() -> None:
     """
-    Main entry point for Lab 1. Loads data, prepares model, trains, validates, and predicts on MNIST.
+    Main entry point for Lab 1. Loads data, prepares model,
+    trains, validates, and predicts on MNIST.
     """
     logging.info("Starting Lab 1")
     try:
@@ -46,7 +47,11 @@ def lab1() -> None:
         logging.info("PREDICTION")
         prediction = model(image_0_tensor.unsqueeze(0).to(device))
         logging.info("Prediction result as tensor: %s", prediction)
-        logging.info("Expected class: %s Predicted class: %s", image_0_label, prediction.argmax().item())
+        logging.info(
+            "Expected class: %s Predicted class: %s",
+            image_0_label,
+            prediction.argmax().item()
+        )
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab1: %s", e)
         raise
@@ -84,7 +89,11 @@ def __get_model_layers__() -> list:
         nn.ReLU(),
         nn.Linear(512, n_classes)
     ]
-    logging.info("Input size: %d (1*28*28), Classes: %d, Model layers: %s", input_size, n_classes, layers)
+    logging.info(
+        "Input size: %d (1*28*28), Classes: %d, Model layers: %s",
+        input_size,
+        n_classes, layers
+    )
     return layers
 
 
@@ -97,9 +106,8 @@ def __compile_model__(device, layers: list) -> nn.Module:
     try:
         model = torch.compile(model)
         logging.info("Model compiled with torch.compile.")
-    except Exception as e:
-        message =  "torch.compile failed: %s. Using uncompiled model."
-        logging.warning(message,e)
+    except (RuntimeError, TypeError) as e:
+        logging.warning("torch.compile failed: %s. Using uncompiled model.", e)
     logging.info(
         "Model device: %s",
         next(model.parameters()).device
@@ -107,7 +115,13 @@ def __compile_model__(device, layers: list) -> nn.Module:
     return model
 
 
-def __train_and_validate_model__(epochs: int, model: nn.Module, loaders: dict, device, loss_function) -> None:
+def __train_and_validate_model__(
+        epochs: int,
+        model: nn.Module,
+        loaders: dict,
+        device,
+        loss_function
+) -> None:
     """
     Trains and validates the model for the specified number of epochs.
     Args:
@@ -121,9 +135,19 @@ def __train_and_validate_model__(epochs: int, model: nn.Module, loaders: dict, d
     valid_loader = loaders['valid']
     for epoch in range(epochs):
         logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
-        __train_model__(model=model, loader=train_loader, device=device, loss_function=loss_function)
+        __train_model__(
+            model=model,
+            loader=train_loader,
+            device=device,
+            loss_function=loss_function
+        )
         logging.info("Epoch %d/%d - Validating", epoch + 1, epochs)
-        __validate_model__(model=model, loader=valid_loader, device=device, loss_function=loss_function)
+        __validate_model__(
+            model=model,
+            loader=valid_loader,
+            device=device,
+            loss_function=loss_function
+        )
 
 
 def __train_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:

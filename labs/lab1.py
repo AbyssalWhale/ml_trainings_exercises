@@ -5,7 +5,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from tools.data import get_mnist_data_sets
+from tools.data import download_and_get_mnist_data_sets
 from tools.device import get_device
 
 
@@ -17,7 +17,7 @@ def lab1() -> None:
     logging.info("Starting Lab 1")
     try:
         device = get_device()
-        train_set, valid_set = get_mnist_data_sets()
+        train_set, valid_set = download_and_get_mnist_data_sets()
 
         logging.info("DATA PREPARATION")
         image_0, image_0_label = train_set[0]

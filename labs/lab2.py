@@ -28,16 +28,15 @@ def lab2():
             label = y_train[i]
 
             image = row.reshape(28, 28)
+            # putting our image as a subplot: taking 1 row, 20 columns, and the i-th image
             plt.subplot(1, num_images, i + 1)
             plt.title(label, fontdict={'fontsize': 30})
             plt.axis('off')
             plt.imshow(image, cmap='gray')
 
-        logging.info(f"current image min - max: {x_train.min()} - {x_train.max()}")
+        logging.info("normalizing the data by dividing pixel values (train and validation data sets) by 255")
         x_train = train_df.values / 255
         x_valid = valid_df.values / 255
-        logging.info(f"x_train: {x_train}")
-        logging.info(f"x_valid: {x_valid}")
 
 
     except (RuntimeError, ValueError, TypeError) as e:

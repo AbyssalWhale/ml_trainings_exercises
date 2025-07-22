@@ -1,6 +1,5 @@
 import logging
 import os
-from zoneinfo import reset_tzpath
 
 import pandas as pd
 

@@ -1,8 +1,10 @@
 import logging
 
+from models.data.data_set import DataSet
 from tools.data import get_asl_data_set
 from tools.device import get_device
 import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
 
 
 def lab2():
@@ -37,6 +39,17 @@ def lab2():
         logging.info("normalizing the data by dividing pixel values (train and validation data sets) by 255")
         x_train = train_df.values / 255
         x_valid = valid_df.values / 255
+
+        BATCH_SIZE = 32
+        logging.info("converting data in PyTorch tensors and creating DataLoader for train and validation data sets")
+        train_data = DataSet(x_train, y_train, device)
+        train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)
+        train_N = len(train_loader.dataset)
+
+        valid_data = DataSet(x_valid, y_valid, device)
+        valid_loader = DataLoader(valid_data, batch_size=BATCH_SIZE)
+        valid_N = len(valid_loader.dataset)
+        batch = next(iter(train_loader))
 
 
     except (RuntimeError, ValueError, TypeError) as e:

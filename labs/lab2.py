@@ -1,4 +1,6 @@
 import logging
+import os.path
+from os import pathconf
 
 import torch
 
@@ -10,98 +12,125 @@ from torch.utils.data import DataLoader
 from torch.optim import Adam
 from torch import nn
 
+from tools.helper_system import get_labs_data_saving_dir
+
+# Constants
+IMG_SIZE = 28
+NUM_CLASSES = 24
+HIDDEN_SIZE = 512
+BATCH_SIZE = 32
+NUM_IMAGES_TO_PLOT = 20
+NORMALIZATION_DIVISOR = 255.0
+EPOCHS = 20
+
 
 def lab2():
+    """
+    Main function for Lab 2: Loads ASL dataset, visualizes, normalizes, prepares loaders, builds and trains model.
+    """
     logging.info("Starting Lab 2")
     try:
+        # Get the device (GPU if available, else CPU)
         device = get_device()
-        train_df, valid_df = get_asl_data_set()
+        logging.info("Device selected for computation: %s", device)
 
+        # Load the ASL training and validation datasets as pandas DataFrames
+        train_df, valid_df = get_asl_data_set()
+        logging.info("Loaded ASL training and validation datasets.")
+
+        # Separate labels from image data
         y_train = train_df.pop('label')
         y_valid = valid_df.pop('label')
         x_train = train_df.values
         x_valid = valid_df.values
-        logging.info("extracted labels and images from the dataframes. ")
-        logging.info(f"train images labels: {y_train.shape} and total images with pixel pear each: {x_train.shape}")
-        logging.info(f"validation images labels: {y_valid.shape} and total images with pixel pear each: {x_valid.shape}")
+        logging.info("Extracted labels and images from the dataframes.")
+        logging.info("Train labels shape: %s, Train images shape: %s", y_train.shape, x_train.shape)
+        logging.info("Validation labels shape: %s, Validation images shape: %s", y_valid.shape, x_valid.shape)
 
-        logging.info("reshaping images from 1D to 2D (28x28 pixels) first 20 images"
-                     " and putting them in single plot (40 x 40 inches)")
+        # Visualize the first NUM_IMAGES_TO_PLOT images from the training set
+        logging.info("Reshaping images from 1D to 2D (%dx%d pixels) for the first %d images and plotting them.", IMG_SIZE, IMG_SIZE, NUM_IMAGES_TO_PLOT)
         plt.figure(figsize=(40, 40))
-        num_images = 20
-        for i in range(num_images):
+        for i in range(NUM_IMAGES_TO_PLOT):
             row = x_train[i]
             label = y_train[i]
-
-            image = row.reshape(28, 28)
-            # putting our image as a subplot: taking 1 row, 20 columns, and the i-th image
-            plt.subplot(1, num_images, i + 1)
+            image = row.reshape(IMG_SIZE, IMG_SIZE)
+            plt.subplot(1, NUM_IMAGES_TO_PLOT, i + 1)
             plt.title(label, fontdict={'fontsize': 30})
             plt.axis('off')
             plt.imshow(image, cmap='gray')
+        # Save the plot to a file for later review
+        plt.savefig(os.path.join(get_labs_data_saving_dir("lab2"), "sample_images.png"))
+        logging.info("Saved a plot of the first %d training images to sample_images.png.", NUM_IMAGES_TO_PLOT)
+        # plt.show()  # Uncomment if running interactively
 
-        logging.info("normalizing the data by dividing pixel values (train and validation data sets) by 255")
-        x_train = train_df.values / 255
-        x_valid = valid_df.values / 255
+        # Normalize pixel values to the range [0, 1] for better neural network performance
+        logging.info("Normalizing the data by dividing pixel values by %d.", NORMALIZATION_DIVISOR)
+        x_train = train_df.values.astype(float) / NORMALIZATION_DIVISOR
+        x_valid = valid_df.values.astype(float) / NORMALIZATION_DIVISOR
+        logging.info("Normalization complete. Example pixel value: %.4f", x_train[0][0])
 
-        logging.info(f"converting data in PyTorch tensors and creating DataLoader with batch sizes 32 for train and validation data sets")
-        train_data, train_loader = __get_train_data_and_loader(
+        # Convert data to PyTorch tensors and create DataLoaders for batching
+        logging.info("Converting data to PyTorch tensors and creating DataLoaders with batch size %d.", BATCH_SIZE)
+        _, train_loader = _get_train_data_and_loader(
             x_df=x_train,
             y_df=y_train,
             device=device,
-            batch_size=32,
+            batch_size=BATCH_SIZE,
             shuffle=True
         )
-        valid_data, valid_loader = __get_train_data_and_loader(
+        _, valid_loader = _get_train_data_and_loader(
             x_df=x_valid,
             y_df=y_valid,
             device=device,
-            batch_size=32,
+            batch_size=BATCH_SIZE,
             shuffle=False
         )
-        logging.info(f"image as tensors: {next(iter(train_loader))}")
+        logging.info("Example batch from train_loader: %s", next(iter(train_loader)))
 
-        logging.info("CREATE LAYERS AND COMPILE MODEL")
-        layers = __get_model_layers__()
-        model = __compile_model__(device, layers)
+        # Build the neural network model
+        logging.info("Creating model layers and compiling the model.")
+        layers = _get_model_layers()
+        model = _compile_model(device, layers)
         loss_function = nn.CrossEntropyLoss()
+        logging.info("Model and loss function ready.")
 
-        logging.info("TRAIN AND VALIDATE MODEL")
-        epochs = 20
-        for epoch in range(epochs):
-            logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
-            __train_model__(model, train_loader, device, loss_function)
-            __validate_model__(model, valid_loader, device, loss_function)
-
-
+        # Train and validate the model for a number of epochs
+        logging.info("Starting training and validation for %d epochs.", EPOCHS)
+        for epoch in range(EPOCHS):
+            logging.info("Epoch %d/%d - Training phase", epoch + 1, EPOCHS)
+            _train_model(model, train_loader, device, loss_function)
+            logging.info("Epoch %d/%d - Validation phase", epoch + 1, EPOCHS)
+            _validate_model(model, valid_loader, device, loss_function)
+        logging.info("Training and validation complete.")
 
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab2: %s", e)
         raise
 
-def __get_model_layers__() -> list:
+
+def _get_model_layers() -> list:
     """
     Prepares and returns the layers for the neural network model.
     """
     logging.info("Preparing layers for the model")
-    input_size = 1 * 28 * 28
-    n_classes = 24
+    input_size = 1 * IMG_SIZE * IMG_SIZE
     layers = [
         nn.Flatten(),
-        nn.Linear(input_size, 512),
+        nn.Linear(input_size, HIDDEN_SIZE),
         nn.ReLU(),
-        nn.Linear(512, 512),
+        nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE),
         nn.ReLU(),
-        nn.Linear(512, n_classes)
+        nn.Linear(HIDDEN_SIZE, NUM_CLASSES)
     ]
     logging.info(
-        "Input size: %d (1*28*28), Classes: %d, Model layers: %s",
+        "Input size: %d (1*%d*%d), Classes: %d, Model layers: %s",
         input_size,
-        n_classes, layers
+        IMG_SIZE, IMG_SIZE, NUM_CLASSES, layers
     )
     return layers
 
-def __compile_model__(device, layers: list) -> nn.Module:
+
+def _compile_model(device, layers: list) -> nn.Module:
     """
     Compiles and returns a PyTorch sequential model on the specified device.
     """
@@ -118,7 +147,8 @@ def __compile_model__(device, layers: list) -> nn.Module:
     )
     return model
 
-def __train_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
+
+def _train_model(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
     """
     Trains the model for one epoch using the training data loader.
     """
@@ -138,7 +168,8 @@ def __train_model__(model: nn.Module, loader: DataLoader, device, loss_function)
         accuracy += get_batch_accuracy(output, y, train_n)
     logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
 
-def __validate_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
+
+def _validate_model(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
     """
     Validates the model using the validation data loader.
     """
@@ -153,12 +184,14 @@ def __validate_model__(model: nn.Module, loader: DataLoader, device, loss_functi
             accuracy += get_batch_accuracy(output, y, valid_N)
     logging.info('Valid - Loss: %.4f Accuracy: %.4f', loss, accuracy)
 
+
 def get_batch_accuracy(output, y, N):
     pred = output.argmax(dim=1, keepdim=True)
     correct = pred.eq(y.view_as(pred)).sum().item()
     return correct / N
 
-def __get_train_data_and_loader(x_df, y_df, device, batch_size, shuffle=True):
+
+def _get_train_data_and_loader(x_df, y_df, device, batch_size, shuffle=True):
     train_data = DataSet(x_df, y_df, device)
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=shuffle)
     return train_data, train_loader

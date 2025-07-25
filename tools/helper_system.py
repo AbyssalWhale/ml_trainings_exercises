@@ -22,6 +22,7 @@ def get_project_dir() -> str:
     logging.info("Project root directory found: %s", current_dir)
     return current_dir
 
+
 def get_labs_data_saving_dir(lab_name: str) -> str:
     """
     Constructs the path to the directory where lab data should be saved.
@@ -38,7 +39,7 @@ def get_labs_data_saving_dir(lab_name: str) -> str:
 
     if not os.path.exists(lab_data_saving_dir):
         os.makedirs(lab_data_saving_dir)
-        logging.info(f"Created directory for %s data: %s", lab_name, lab_data_saving_dir)
+        logging.info("created directory for %s data: %s", lab_name, lab_data_saving_dir)
 
     return lab_data_saving_dir
 

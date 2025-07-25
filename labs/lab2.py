@@ -1,17 +1,15 @@
 import logging
 import os.path
-from os import pathconf
 
 import torch
 
+import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
+from torch import nn
+from torch.optim import Adam
 from models.data.data_set import DataSet
 from tools.data import get_asl_data_set
 from tools.device import get_device
-import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader
-from torch.optim import Adam
-from torch import nn
-
 from tools.helper_system import get_labs_data_saving_dir
 
 # Constants
@@ -26,7 +24,8 @@ EPOCHS = 20
 
 def lab2():
     """
-    Main function for Lab 2: Loads ASL dataset, visualizes, normalizes, prepares loaders, builds and trains model.
+    Main function for Lab 2:
+    Loads ASL dataset, visualizes, normalizes, prepares loaders, builds and trains model.
     """
     logging.info("Starting Lab 2")
     try:
@@ -44,11 +43,20 @@ def lab2():
         x_train = train_df.values
         x_valid = valid_df.values
         logging.info("Extracted labels and images from the dataframes.")
-        logging.info("Train labels shape: %s, Train images shape: %s", y_train.shape, x_train.shape)
-        logging.info("Validation labels shape: %s, Validation images shape: %s", y_valid.shape, x_valid.shape)
+        logging.info(
+            "Train labels shape: %s, Train images shape: %s",
+            y_train.shape, x_train.shape
+        )
+        logging.info(
+            "Validation labels shape: %s, Validation images shape: %s",
+            y_valid.shape, x_valid.shape
+        )
 
         # Visualize the first NUM_IMAGES_TO_PLOT images from the training set
-        logging.info("Reshaping images from 1D to 2D (%dx%d pixels) for the first %d images and plotting them.", IMG_SIZE, IMG_SIZE, NUM_IMAGES_TO_PLOT)
+        logging.info(
+            "Reshaping images from 1D to 2D (%dx%d pixels) for the first %d images and plotting them.",
+            IMG_SIZE, IMG_SIZE, NUM_IMAGES_TO_PLOT
+        )
         plt.figure(figsize=(40, 40))
         for i in range(NUM_IMAGES_TO_PLOT):
             row = x_train[i]
@@ -63,7 +71,8 @@ def lab2():
         logging.info("Saved a plot of the first %d training images to sample_images.png.", NUM_IMAGES_TO_PLOT)
         # plt.show()  # Uncomment if running interactively
 
-        # Normalize pixel values to the range [0, 1] for better neural network performance
+        # Normalize pixel
+        # values to the range [0, 1] for better neural network performance
         logging.info("Normalizing the data by dividing pixel values by %d.", NORMALIZATION_DIVISOR)
         x_train = train_df.values.astype(float) / NORMALIZATION_DIVISOR
         x_valid = valid_df.values.astype(float) / NORMALIZATION_DIVISOR
@@ -100,7 +109,7 @@ def lab2():
             logging.info("Epoch %d/%d - Training phase", epoch + 1, EPOCHS)
             _train_model(model, train_loader, device, loss_function)
             logging.info("Epoch %d/%d - Validation phase", epoch + 1, EPOCHS)
-            _validate_model(model, valid_loader, device, loss_function)
+            _validate_model(model, valid_loader, loss_function)
         logging.info("Training and validation complete.")
 
     except (RuntimeError, ValueError, TypeError) as e:
@@ -169,7 +178,7 @@ def _train_model(model: nn.Module, loader: DataLoader, device, loss_function) ->
     logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
 
 
-def _validate_model(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
+def _validate_model(model: nn.Module, loader: DataLoader, loss_function) -> None:
     """
     Validates the model using the validation data loader.
     """

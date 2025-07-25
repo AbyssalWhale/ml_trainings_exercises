@@ -14,7 +14,8 @@ logging.basicConfig(
 
 def main():
     try:
-        # lab1()
+        lab1()
+        shut_down()
         lab2()
     finally:
         shut_down()

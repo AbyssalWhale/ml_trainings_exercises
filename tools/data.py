@@ -28,6 +28,7 @@ def download_and_get_mnist_data_sets() -> tuple:
         logging.error("Error loading MNIST datasets: %s", e)
         raise
 
+
 def get_asl_data_set() -> tuple:
     try:
         data_path = os.path.join(get_project_dir(), "data", "MNIST", "asl")

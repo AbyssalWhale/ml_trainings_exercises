@@ -45,14 +45,21 @@ def lab2():
         x_valid = valid_df.values / 255
 
         logging.info(f"converting data in PyTorch tensors and creating DataLoader with batch sizes 32 for train and validation data sets")
-        BATCH_SIZE = 32
-        train_data = DataSet(x_train, y_train, device)
-        train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)
-
-        valid_data = DataSet(x_valid, y_valid, device)
-        valid_loader = DataLoader(valid_data, batch_size=BATCH_SIZE)
-        batch = next(iter(train_loader))
-        logging.info(f"image as tensors: {batch}")
+        train_data, train_loader = __get_train_data_and_loader(
+            x_df=x_train,
+            y_df=y_train,
+            device=device,
+            batch_size=32,
+            shuffle=True
+        )
+        valid_data, valid_loader = __get_train_data_and_loader(
+            x_df=x_valid,
+            y_df=y_valid,
+            device=device,
+            batch_size=32,
+            shuffle=False
+        )
+        logging.info(f"image as tensors: {next(iter(train_loader))}")
 
         logging.info("CREATE LAYERS AND COMPILE MODEL")
         layers = __get_model_layers__()
@@ -150,3 +157,8 @@ def get_batch_accuracy(output, y, N):
     pred = output.argmax(dim=1, keepdim=True)
     correct = pred.eq(y.view_as(pred)).sum().item()
     return correct / N
+
+def __get_train_data_and_loader(x_df, y_df, device, batch_size, shuffle=True):
+    train_data = DataSet(x_df, y_df, device)
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=shuffle)
+    return train_data, train_loader

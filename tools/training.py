@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torch import nn
 from torch.optim import Adam
 
+
 def train_and_validate_model(
         epochs,
         model: nn.Module,
@@ -58,6 +59,7 @@ def compile_model(device, layers: list) -> nn.Module:
     )
     return model
 
+
 def train_model(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
     """
     Trains the model for one epoch using the training data loader.
@@ -77,6 +79,7 @@ def train_model(model: nn.Module, loader: DataLoader, device, loss_function) -> 
         loss += batch_loss.item()
         accuracy += get_batch_accuracy(output, y, train_n)
     logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
+
 
 def validate_model(
         model: nn.Module,
@@ -99,6 +102,7 @@ def validate_model(
             loss += loss_function(output, y).item()
             accuracy += get_batch_accuracy(output, y, valid_N)
     logging.info('Valid - Loss: %.4f Accuracy: %.4f', loss, accuracy)
+
 
 def get_batch_accuracy(output, y, N):
     """

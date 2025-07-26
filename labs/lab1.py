@@ -74,6 +74,7 @@ def __convert_image_to_tensor__(image) -> tuple:
     )
     return trans, tensor
 
+
 def __get_model_layers__() -> list:
     """
     Prepares and returns the layers for the neural network model.

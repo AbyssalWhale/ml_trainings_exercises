@@ -37,8 +37,9 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
 ## 🗂️ File Structure
 ```
 main.py                # Entry point for running the labs
-labs/lab1.py           # Lab 1: MNIST training and evaluation
-labs/lab2.py           # Lab 2: MNIST data visualization and exploration
+labs/                  # All labs
+  lab1.py              # Lab 1: MNIST training and evaluation
+  lab2.py              # Lab 2: MNIST data visualization and exploration
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils

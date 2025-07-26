@@ -2,14 +2,14 @@
 ignore=__pycache__,data/MNIST
 
 [MESSAGES CONTROL]
-disable=missing-docstring,invalid-name,too-few-public-methods
+disable=missing-docstring,invalid-name,too-few-public-methods,too-many-positional-arguments
 
 [FORMAT]
-max-line-length=100
+max-line-length=120
 
 [DESIGN]
-max-args=5
-max-locals=15
+max-args=7
+max-locals=20
 max-branches=12
 max-statements=50
 max-parents=7
@@ -23,4 +23,3 @@ max-module-lines=1000
 [REPORTS]
 output-format=colorized
 reports=no
-

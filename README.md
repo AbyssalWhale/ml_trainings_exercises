@@ -10,6 +10,11 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
   - 🏋️ Trains and validates the model with detailed logging
   - 🔮 Predicts and logs results for sample images
   - 🛠️ Modular codebase for easy extension
+- **Lab 2**
+  - 🖼️ Loads and reshapes sample images from the MNIST dataset
+  - 📊 Visualizes and saves reshaped images for inspection
+  - 🧪 Demonstrates basic data exploration and visualization techniques
+  - 📝 Includes extra comments and logging for ML beginners
 
 ## 🏁 Getting Started
 1. ⬇️ Clone the repository.
@@ -33,8 +38,8 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
 ```
 main.py                # Entry point for running the labs
 labs/                  # All labs
-  lab1.py              # Lab 1: MNIST workflow
-  ...
+  lab1.py              # Lab 1: MNIST training and evaluation
+  lab2.py              # Lab 2: MNIST data visualization and exploration
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils

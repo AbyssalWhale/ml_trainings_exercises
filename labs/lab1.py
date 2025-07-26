@@ -1,12 +1,11 @@
 import logging
-import torch
 from torch import nn
-from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from tools.data import get_mnist_data_sets
+from tools.data import download_and_get_mnist_data_sets
 from tools.device import get_device
+from tools.training import compile_model, train_and_validate_model
 
 
 def lab1() -> None:
@@ -17,7 +16,7 @@ def lab1() -> None:
     logging.info("Starting Lab 1")
     try:
         device = get_device()
-        train_set, valid_set = get_mnist_data_sets()
+        train_set, valid_set = download_and_get_mnist_data_sets()
 
         logging.info("DATA PREPARATION")
         image_0, image_0_label = train_set[0]
@@ -34,14 +33,16 @@ def lab1() -> None:
 
         logging.info("PREPARE TRAIN AND VALIDATE MODEL")
         layers = __get_model_layers__()
-        model = __compile_model__(device, layers)
+        model = compile_model(device, layers)
         loss_function = nn.CrossEntropyLoss()
-        __train_and_validate_model__(
+        train_and_validate_model(
             epochs=5,
             model=model,
-            loaders=loaders,
+            train_loader=loaders['train'],
+            valid_loader=loaders['valid'],
             device=device,
-            loss_function=loss_function
+            loss_function=loss_function,
+            is_lab1=True
         )
 
         logging.info("PREDICTION")
@@ -95,104 +96,3 @@ def __get_model_layers__() -> list:
         n_classes, layers
     )
     return layers
-
-
-def __compile_model__(device, layers: list) -> nn.Module:
-    """
-    Compiles and returns a PyTorch sequential model on the specified device.
-    """
-    model = nn.Sequential(*layers)
-    model.to(device)
-    try:
-        model = torch.compile(model)
-        logging.info("Model compiled with torch.compile.")
-    except (RuntimeError, TypeError) as e:
-        logging.warning("torch.compile failed: %s. Using uncompiled model.", e)
-    logging.info(
-        "Model device: %s",
-        next(model.parameters()).device
-    )
-    return model
-
-
-def __train_and_validate_model__(
-        epochs: int,
-        model: nn.Module,
-        loaders: dict,
-        device,
-        loss_function
-) -> None:
-    """
-    Trains and validates the model for the specified number of epochs.
-    Args:
-        epochs (int): Number of epochs.
-        model (nn.Module): The model to train.
-        loaders (dict): Dictionary with 'train' and 'valid' DataLoader.
-        device: Device to use.
-        loss_function: Loss function.
-    """
-    train_loader = loaders['train']
-    valid_loader = loaders['valid']
-    for epoch in range(epochs):
-        logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
-        __train_model__(
-            model=model,
-            loader=train_loader,
-            device=device,
-            loss_function=loss_function
-        )
-        logging.info("Epoch %d/%d - Validating", epoch + 1, epochs)
-        __validate_model__(
-            model=model,
-            loader=valid_loader,
-            device=device,
-            loss_function=loss_function
-        )
-
-
-def __train_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
-    """
-    Trains the model for one epoch using the training data loader.
-    """
-    optimizer = Adam(model.parameters())
-    train_n = len(loader.dataset)
-    loss = 0.0
-    accuracy = 0.0
-    model.train()
-    for x, y in loader:
-        x, y = x.to(device), y.to(device)
-        output = model(x)
-        optimizer.zero_grad()
-        batch_loss = loss_function(output, y)
-        batch_loss.backward()
-        optimizer.step()
-        loss += batch_loss.item()
-        accuracy += get_batch_accuracy(output, y, train_n)
-    logging.info('Train - Loss: %.4f Accuracy: %.4f', loss, accuracy)
-
-
-def __validate_model__(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
-    """
-    Validates the model using the validation data loader.
-    """
-    loss = 0.0
-    accuracy = 0.0
-    valid_N = len(loader.dataset)
-    model.eval()
-    with torch.no_grad():
-        for x, y in loader:
-            x, y = x.to(device), y.to(device)
-            output = model(x)
-            loss += loss_function(output, y).item()
-            accuracy += get_batch_accuracy(output, y, valid_N)
-    logging.info('Valid - Loss: %.4f Accuracy: %.4f', loss, accuracy)
-
-
-def get_batch_accuracy(output: torch.Tensor, y: torch.Tensor, N: int) -> float:
-    """
-    Calculates the accuracy for a batch.
-    Returns the fraction of correct predictions in the batch.
-    """
-    pred = output.argmax(dim=1, keepdim=True)
-    correct = pred.eq(y.view_as(pred)).sum().item()
-    return correct / N

@@ -23,6 +23,27 @@ def get_project_dir() -> str:
     return current_dir
 
 
+def get_labs_data_saving_dir(lab_name: str) -> str:
+    """
+    Constructs the path to the directory where lab data should be saved.
+
+    Args:
+        lab_name (str): The name of the lab.
+
+    Returns:
+        str: The absolute path to the lab's data saving directory.
+    """
+    project_dir = get_project_dir()
+    labs_data_dir = os.path.join(project_dir, "data", "labs", lab_name)
+    lab_data_saving_dir = os.path.join(labs_data_dir, lab_name)
+
+    if not os.path.exists(lab_data_saving_dir):
+        os.makedirs(lab_data_saving_dir)
+        logging.info("created directory for %s data: %s", lab_name, lab_data_saving_dir)
+
+    return lab_data_saving_dir
+
+
 def shut_down() -> None:
     """
     Shuts down the IPython kernel if running in an IPython environment.

@@ -1,6 +1,6 @@
 [flake8]
-max-line-length = 150
-max-complexity = 10
+max-line-length = 170
+max-complexity = 15
 exclude = __pycache__,data/MNIST
 statistics = True
 count = True

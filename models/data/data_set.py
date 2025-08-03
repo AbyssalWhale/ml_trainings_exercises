@@ -14,3 +14,21 @@ class DataSet(Dataset):
 
     def __len__(self):
         return len(self.xs)
+
+
+class DataSetL3(Dataset):
+    def __init__(self, base_df, device):
+        x_df = base_df.copy()
+        y_df = x_df.pop('label')
+        x_df = x_df.values / 255
+        x_df = x_df.reshape(-1, 1, 28, 28)
+        self.xs = torch.tensor(x_df).float().to(device)
+        self.ys = torch.tensor(y_df).to(device)
+
+    def __getitem__(self, idx):
+        x = self.xs[idx]
+        y = self.ys[idx]
+        return x, y
+
+    def __len__(self):
+        return len(self.xs)

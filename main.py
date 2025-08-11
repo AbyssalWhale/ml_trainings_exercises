@@ -2,6 +2,7 @@ import logging
 
 from labs.lab1 import lab1
 from labs.lab2 import lab2
+from labs.lab3 import lab3
 from tools.helper_system import shut_down
 
 logging.basicConfig(
@@ -17,6 +18,8 @@ def main():
         lab1()
         shut_down()
         lab2()
+        shut_down()
+        lab3()
     finally:
         shut_down()
 

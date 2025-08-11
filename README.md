@@ -15,6 +15,12 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
   - 📊 Visualizes and saves reshaped images for inspection
   - 🧪 Demonstrates basic data exploration and visualization techniques
   - 📝 Includes extra comments and logging for ML beginners
+- **Lab 3**
+  - 🤟 Loads and preprocesses American Sign Language (ASL) MNIST-style data
+  - 🧠 Builds a convolutional neural network (CNN) for ASL sign classification
+  - 🔄 Reshapes and visualizes input data for CNN compatibility
+  - 🏋️ Trains and validates the CNN model with detailed logging
+  - 🛠️ Modular and beginner-friendly code with extra comments
 
 ## 🏁 Getting Started
 1. ⬇️ Clone the repository.
@@ -40,6 +46,7 @@ main.py                # Entry point for running the labs
 labs/                  # All labs
   lab1.py              # Lab 1: MNIST training and evaluation
   lab2.py              # Lab 2: MNIST data visualization and exploration
+  lab3.py              # Lab 3: ASL data preprocessing and CNN training
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils

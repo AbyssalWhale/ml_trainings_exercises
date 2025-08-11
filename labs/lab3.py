@@ -1,12 +1,10 @@
 import logging
 
-from models.data.data_set import DataSetL3
 from torch.utils.data import DataLoader
+from torch import nn
+from models.data.data_set import DataSetL3
 from tools.data import get_asl_data_set
 from tools.device import get_device
-from torch import nn
-from torch.optim import Adam
-
 from tools.training import train_and_validate_model
 
 IMG_HEIGHT = 28
@@ -52,21 +50,19 @@ def lab3():
 
         layers = _get_layers()
         model = nn.Sequential(*layers)
-        model = model.to(device)
         # Uncomment if you want to use torch.compile for optimization. Failing on mac m
         # model = torch.compile(model)
         loss_function = nn.CrossEntropyLoss()
 
         train_and_validate_model(
             epochs=20,
-            model=model,
+            model=model.to(device),
             train_loader=train_loader,
             valid_loader=valid_loader,
             device=device,
             loss_function=loss_function,
             is_lab1=False
         )
-
 
         logging.info("Example batch from train_loader: %s", next(iter(train_loader)))
     except (RuntimeError, ValueError, TypeError) as e:

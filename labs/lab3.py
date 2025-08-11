@@ -53,8 +53,9 @@ def lab3():
         layers = _get_layers()
         model = nn.Sequential(*layers)
         model = model.to(device)
+        # Uncomment if you want to use torch.compile for optimization. Failing on mac m
+        # model = torch.compile(model)
         loss_function = nn.CrossEntropyLoss()
-        optimizer = Adam(model.parameters())
 
         train_and_validate_model(
             epochs=20,

@@ -18,7 +18,7 @@ def lab3():
     CNN introduction - using data from lab2
     """
     try:
-        logging.info("PREPARATION")
+        logging.info("LAB3. PREPARATION")
         device = get_device()
         logging.info("Device selected for computation: %s", device)
 

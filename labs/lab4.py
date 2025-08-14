@@ -95,6 +95,16 @@ def lab4():
         plt.title("random horizontal flip image")
         # plt.show()
 
+        logging.info("performing random rotation")
+        trans = transforms.Compose([
+            transforms.RandomRotation(10)
+        ])
+        new_x_0 = trans(x_0)
+        image = F.to_pil_image(new_x_0)
+        plt.imshow(image, cmap='gray')
+        plt.title("random rotation")
+        # plt.show()
+
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab2: %s", e)
         raise

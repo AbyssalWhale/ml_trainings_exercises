@@ -74,7 +74,7 @@ def lab4():
         # plt.show()
         print("")
 
-        logging.info("performing random resize crop")
+        logging.info("performing example of random resize crop")
         trans = transforms.Compose([
             transforms.RandomResizedCrop((IMG_WIDTH, IMG_HEIGHT), scale=(.7, 1), ratio=(1, 1)),
         ])
@@ -85,7 +85,7 @@ def lab4():
         plt.title("resized image")
         # plt.show()
 
-        logging.info("performing random horizontal flip")
+        logging.info("performing example of random horizontal flip")
         trans = transforms.Compose([
             transforms.RandomHorizontalFlip()
         ])
@@ -95,7 +95,7 @@ def lab4():
         plt.title("random horizontal flip image")
         # plt.show()
 
-        logging.info("performing random rotation")
+        logging.info("performing example of random rotation")
         trans = transforms.Compose([
             transforms.RandomRotation(10)
         ])
@@ -103,6 +103,19 @@ def lab4():
         image = F.to_pil_image(new_x_0)
         plt.imshow(image, cmap='gray')
         plt.title("random rotation")
+        # plt.show()
+
+        logging.info("performing example of colors manipulation")
+        brightness = .2  # Change to be from 0 to 1
+        contrast = .5  # Change to be from 0 to 1
+
+        trans = transforms.Compose([
+            transforms.ColorJitter(brightness=brightness, contrast=contrast)
+        ])
+        new_x_0 = trans(x_0)
+        image = F.to_pil_image(new_x_0)
+        plt.imshow(image, cmap='gray')
+        plt.title("colors manipulation")
         # plt.show()
 
     except (RuntimeError, ValueError, TypeError) as e:

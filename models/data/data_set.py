@@ -17,11 +17,18 @@ class DataSet(Dataset):
 
 
 class DataSetL3(Dataset):
-    def __init__(self, base_df, device):
+    def __init__(
+            self,
+            base_df,
+            device,
+            img_chs=1,
+            img_height=28,
+            img_width=28,
+    ):
         x_df = base_df.copy()
         y_df = x_df.pop('label')
         x_df = x_df.values / 255
-        x_df = x_df.reshape(-1, 1, 28, 28)
+        x_df = x_df.reshape(-1, img_chs, img_height, img_width)
         self.xs = torch.tensor(x_df).float().to(device)
         self.ys = torch.tensor(y_df).to(device)
 

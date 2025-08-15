@@ -3,14 +3,13 @@ import logging
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
+import torchvision.transforms.functional as F
+import torchvision.transforms.v2 as transforms
+import matplotlib.pyplot as plt
 from models.data.data_set import DataSetL3
 from models.nn.custom_cnn_layers_l4 import CustomCNNLayersL4
 from tools.data import get_asl_data_set
 from tools.device import get_device
-import torchvision.transforms.functional as F
-import matplotlib.pyplot as plt
-import torchvision.transforms.v2 as transforms
-
 from tools.training import train_and_validate_model
 
 IMG_HEIGHT = 28
@@ -22,7 +21,8 @@ BATCH_SIZE = 32
 
 def lab4():
     """Lab 4: Model is still lagging with validation accuracy.
-    We are increasing the size and variance of the data set to make model more robust by applying technique name - data augmentation.
+    We are increasing the size and variance of the data set
+    to make model more robust by applying technique name - data augmentation.
     """
     try:
         logging.info("LAB4. PREPARATION")
@@ -103,7 +103,7 @@ def _data_argumentation_exp(x_0: torch.Tensor):
     It is not used in the lab4 function, but it can be used to test different data argumentation techniques.
     """
 
-    fig, axes = plt.subplots(1, 5, figsize=(20, 4))
+    _, axes = plt.subplots(1, 5, figsize=(20, 4))
     # Original image
     axes[0].imshow(F.to_pil_image(x_0), cmap='gray')
     axes[0].set_title("Original")

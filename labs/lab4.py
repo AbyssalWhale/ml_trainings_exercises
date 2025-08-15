@@ -22,7 +22,7 @@ BATCH_SIZE = 32
 def lab4():
     """Lab 4: Model is still lagging with validation accuracy.
     We are increasing the size and variance of the data set
-    to make model more robust by applying technique name - data augmentation.
+    to make model more robust by applying technique name - data argumentation.
     """
     try:
         logging.info("LAB4. PREPARATION")

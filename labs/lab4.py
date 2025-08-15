@@ -3,7 +3,6 @@ import logging
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
-from torch.optim import Adam
 from models.data.data_set import DataSetL3
 from models.nn.custom_cnn_layers_l4 import CustomCNNLayersL4
 from tools.data import get_asl_data_set
@@ -58,7 +57,6 @@ def lab4():
         logging.info("design model")
         base_model = nn.Sequential(*_get_layers())
         loss_function = nn.CrossEntropyLoss()
-        optimizer = Adam(base_model.parameters())
         # model = torch.compile(base_model.to(device))
         logging.info("Model compiled with torch.compile. Model layers: %s", base_model.to(device))
 
@@ -68,70 +66,7 @@ def lab4():
         x_0 = row_0.values / 255
         x_0 = x_0.reshape(IMG_CHS, IMG_WIDTH, IMG_HEIGHT)
         x_0 = torch.tensor(x_0)
-        logging.info("reshaped image: %s", x_0.shape)
-        image = F.to_pil_image(x_0)
-        plt.figure()
-        plt.imshow(image, cmap='gray')
-        plt.title("reshaped image")
-        # plt.show()
-        print("")
-
-        logging.info("performing example of random resize crop")
-        trans = transforms.Compose([
-            transforms.RandomResizedCrop((IMG_WIDTH, IMG_HEIGHT), scale=(.7, 1), ratio=(1, 1)),
-        ])
-        new_x_0 = trans(x_0)
-        image = F.to_pil_image(new_x_0)
-        plt.figure()
-        plt.imshow(image, cmap='gray')
-        plt.title("resized image")
-        # plt.show()
-
-        logging.info("performing example of random horizontal flip")
-        trans = transforms.Compose([
-            transforms.RandomHorizontalFlip()
-        ])
-        new_x_0 = trans(x_0)
-        image = F.to_pil_image(new_x_0)
-        plt.imshow(image, cmap='gray')
-        plt.title("random horizontal flip image")
-        # plt.show()
-
-        logging.info("performing example of random rotation")
-        trans = transforms.Compose([
-            transforms.RandomRotation(10)
-        ])
-        new_x_0 = trans(x_0)
-        image = F.to_pil_image(new_x_0)
-        plt.imshow(image, cmap='gray')
-        plt.title("random rotation")
-        # plt.show()
-
-        logging.info("performing example of colors manipulation")
-        brightness = .2  # Change to be from 0 to 1
-        contrast = .5  # Change to be from 0 to 1
-
-        trans = transforms.Compose([
-            transforms.ColorJitter(brightness=brightness, contrast=contrast)
-        ])
-        new_x_0 = trans(x_0)
-        image = F.to_pil_image(new_x_0)
-        plt.imshow(image, cmap='gray')
-        plt.title("colors manipulation")
-        # plt.show()
-
-        logging.info("apply all techniques to the data set")
-        random_transforms = transforms.Compose([
-            transforms.RandomRotation(5),
-            transforms.RandomResizedCrop((IMG_WIDTH, IMG_HEIGHT), scale=(.9, 1), ratio=(1, 1)),
-            transforms.RandomHorizontalFlip(),
-            transforms.ColorJitter(brightness=.2, contrast=.5)
-        ])
-        new_x_0 = random_transforms(x_0)
-        image = F.to_pil_image(new_x_0)
-        plt.imshow(image, cmap='gray')
-        plt.title("all applied techniques")
-        # plt.show()
+        random_transforms = _data_argumentation_exp(x_0)
 
         train_and_validate_model(
             epochs=20,
@@ -159,3 +94,55 @@ def _get_layers() -> list[nn.Module]:
         nn.ReLU(),
         nn.Linear(512, N_CLASSES)
     ]
+
+def _data_argumentation_exp(x_0: torch.Tensor):
+    """This function is used to experiment with data argumentation techniques.
+    It is not used in the lab4 function, but it can be used to test different data argumentation techniques.
+    """
+
+    fig, axes = plt.subplots(1, 5, figsize=(20, 4))
+    # Original image
+    axes[0].imshow(F.to_pil_image(x_0), cmap='gray')
+    axes[0].set_title("Original")
+    axes[0].axis('off')
+
+    # Random resize crop
+    trans_resize = transforms.Compose([
+        transforms.RandomResizedCrop((IMG_WIDTH, IMG_HEIGHT), scale=(.7, 1), ratio=(1, 1)),
+    ])
+    new_x_0_resize = trans_resize(x_0)
+    axes[1].imshow(F.to_pil_image(new_x_0_resize), cmap='gray')
+    axes[1].set_title("random resize crop")
+    axes[1].axis('off')
+
+    # Random horizontal flip
+    trans_flip = transforms.Compose([
+        transforms.RandomHorizontalFlip()
+    ])
+    new_x_0_flip = trans_flip(x_0)
+    axes[2].imshow(F.to_pil_image(new_x_0_flip), cmap='gray')
+    axes[2].set_title("Horizontal Flip")
+    axes[2].axis('off')
+    # Random rotation
+    trans_rot = transforms.Compose([
+        transforms.RandomRotation(10)
+    ])
+    new_x_0_rot = trans_rot(x_0)
+    axes[3].imshow(F.to_pil_image(new_x_0_rot), cmap='gray')
+    axes[3].set_title("Rotation")
+    axes[3].axis('off')
+    # Color manipulation + all techniques
+    random_transforms = transforms.Compose([
+        transforms.RandomRotation(5),
+        transforms.RandomResizedCrop((IMG_WIDTH, IMG_HEIGHT), scale=(.9, 1), ratio=(1, 1)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness=.2, contrast=.5)
+    ])
+    new_x_0_all = random_transforms(x_0)
+    axes[4].imshow(F.to_pil_image(new_x_0_all), cmap='gray')
+    axes[4].set_title("All Techniques")
+    axes[4].axis('off')
+    plt.suptitle("Image Augmentation Examples", fontsize=16)
+    plt.tight_layout()
+    plt.show()
+    return random_transforms

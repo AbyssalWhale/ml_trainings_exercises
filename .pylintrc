@@ -8,7 +8,7 @@ disable=missing-docstring,invalid-name,too-few-public-methods,too-many-positiona
 max-line-length=120
 
 [DESIGN]
-max-args=7
+max-args=10
 max-locals=20
 max-branches=12
 max-statements=50

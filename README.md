@@ -21,6 +21,11 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
   - 🔄 Reshapes and visualizes input data for CNN compatibility
   - 🏋️ Trains and validates the CNN model with detailed logging
   - 🛠️ Modular and beginner-friendly code with extra comments
+- **Lab 4**
+  - 🎨 Applies data augmentation techniques to ASL images
+  - 🔄 Includes random rotations, shifts, flips, and color adjustments
+  - 📊 Visualizes original and augmented images for comparison
+  - 🚀 Improves model robustness and generalization with augmented training data
 
 ## 🏁 Getting Started
 1. ⬇️ Clone the repository.
@@ -47,6 +52,7 @@ labs/                  # All labs
   lab1.py              # Lab 1: MNIST training and evaluation
   lab2.py              # Lab 2: MNIST data visualization and exploration
   lab3.py              # Lab 3: ASL data preprocessing and CNN training
+  lab4.py              # Lab 4: Data augmentation for ASL CNN (image transformations, visualization)
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils
@@ -54,6 +60,28 @@ tools/                 # Utilities
 requirements.txt       # Python dependencies
 data/                  # data storage
 ```
+
+## 📚 Lab Descriptions
+
+### Lab 1: MNIST Training and Evaluation
+- Loads MNIST dataset
+- Builds and trains a simple CNN
+- Evaluates accuracy and visualizes results
+
+### Lab 2: MNIST Data Visualization and Exploration
+- Visualizes sample images from MNIST
+- Explores data distribution and reshaping
+- Saves sample images for review
+
+### Lab 3: ASL Data Preprocessing and CNN Training
+- Loads and preprocesses ASL sign language data
+- Builds a deeper CNN for multi-class classification
+- Trains and validates the model with logging
+
+### Lab 4: Data Augmentation for ASL CNN
+- Applies image augmentation techniques (rotation, crop, flip, color jitter)
+- Visualizes original and augmented images side-by-side
+- Integrates augmentation into training pipeline for improved robustness
 
 ## 🤝 Contributing
 - ✨ Follow code style and documentation rules

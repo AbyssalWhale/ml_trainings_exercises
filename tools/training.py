@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 from torch.optim import Adam
+import torchvision.transforms.v2 as transforms
 
 
 def train_and_validate_model(
@@ -13,24 +14,31 @@ def train_and_validate_model(
         valid_loader: DataLoader,
         device,
         loss_function,
-        is_lab1: bool
+        is_lab1: bool = False,
+        random_transforms: transforms.Compose = None
 ):
     """
     Trains and validates the model for the specified number of epochs.
     Args:
+        random_transforms:
+        is_lab1:
+        valid_loader:
+        train_loader:
         epochs (int): Number of epochs.
         model (nn.Module): The model to train.
         loaders (dict): Dictionary with 'train' and 'valid' DataLoader.
         device: Device to use.
         loss_function: Loss function.
     """
+    logging.info("train and validate model")
     for epoch in range(epochs):
         logging.info("Epoch %d/%d - Training", epoch + 1, epochs)
         train_model(
             model=model,
             loader=train_loader,
             device=device,
-            loss_function=loss_function
+            loss_function=loss_function,
+            random_transforms=random_transforms
         )
         logging.info("Epoch %d/%d - Validating", epoch + 1, epochs)
         validate_model(
@@ -60,7 +68,13 @@ def compile_model(device, layers: list) -> nn.Module:
     return model
 
 
-def train_model(model: nn.Module, loader: DataLoader, device, loss_function) -> None:
+def train_model(
+        model: nn.Module,
+        loader: DataLoader,
+        device,
+        loss_function,
+        random_transforms: transforms.Compose
+) -> None:
     """
     Trains the model for one epoch using the training data loader.
     """
@@ -71,7 +85,7 @@ def train_model(model: nn.Module, loader: DataLoader, device, loss_function) -> 
     model.train()
     for x, y in loader:
         x, y = x.to(device), y.to(device)
-        output = model(x)
+        output = model(x) if random_transforms is None else model(random_transforms(x))
         optimizer.zero_grad()
         batch_loss = loss_function(output, y)
         batch_loss.backward()

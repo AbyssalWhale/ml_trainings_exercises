@@ -12,7 +12,7 @@ import torchvision.transforms.functional as F
 import matplotlib.pyplot as plt
 import torchvision.transforms.v2 as transforms
 
-from tools.training import get_batch_accuracy
+from tools.training import get_batch_accuracy, train_and_validate_model
 
 IMG_HEIGHT = 28
 IMG_WIDTH = 28
@@ -133,27 +133,15 @@ def lab4():
         plt.title("all applied techniques")
         # plt.show()
 
-        logging.info("train and validate model")
-        epochs = 20
-
-        for epoch in range(epochs):
-            print('Epoch: {}'.format(epoch))
-            _train(
-                device=device,
-                model=base_model.to(device),
-                train_loader=train_loader,
-                optimizer=optimizer,
-                loss_function=loss_function,
-                train_N=len(train_data),
-                random_transforms=random_transforms
-            )
-            _validate(
-                model=base_model.to(device),
-                valid_loader=valid_loader,
-                loss_function=loss_function,
-                valid_N=len(valid_data)
-            )
-
+        train_and_validate_model(
+            epochs=20,
+            model=base_model.to(device),
+            train_loader=train_loader,
+            valid_loader=valid_loader,
+            device=device,
+            loss_function=loss_function,
+            random_transforms=random_transforms
+        )
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab2: %s", e)
         raise
@@ -171,46 +159,3 @@ def _get_layers() -> list[nn.Module]:
         nn.ReLU(),
         nn.Linear(512, N_CLASSES)
     ]
-
-def _train(
-        device,
-        model: nn.Module,
-        train_loader: DataLoader,
-        optimizer: Adam,
-        loss_function: nn.Module,
-        train_N: int,
-        random_transforms: transforms.Compose
-):
-    loss = 0
-    accuracy = 0
-
-    model.train()
-    for x, y in train_loader:
-        x, y = x.to(device), y.to(device)
-        output = model(random_transforms(x))  # Updated
-        optimizer.zero_grad()
-        batch_loss = loss_function(output, y)
-        batch_loss.backward()
-        optimizer.step()
-
-        loss += batch_loss.item()
-        accuracy += get_batch_accuracy(output, y, train_N)
-    logging.info('Train - Loss: {:.4f} Accuracy: {:.4f}'.format(loss, accuracy))
-
-def _validate(
-        model: nn.Module,
-        valid_loader: DataLoader,
-        loss_function: nn.Module,
-        valid_N: int
-):
-    loss = 0
-    accuracy = 0
-
-    model.eval()
-    with torch.no_grad():
-        for x, y in valid_loader:
-            output = model(x)
-
-            loss += loss_function(output, y).item()
-            accuracy += get_batch_accuracy(output, y, valid_N)
-    logging.info('Valid - Loss: {:.4f} Accuracy: {:.4f}'.format(loss, accuracy))

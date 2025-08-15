@@ -11,7 +11,7 @@ import torchvision.transforms.functional as F
 import matplotlib.pyplot as plt
 import torchvision.transforms.v2 as transforms
 
-from tools.training import get_batch_accuracy, train_and_validate_model
+from tools.training import train_and_validate_model
 
 IMG_HEIGHT = 28
 IMG_WIDTH = 28
@@ -19,11 +19,12 @@ IMG_CHS = 1
 N_CLASSES = 24
 BATCH_SIZE = 32
 
+
 def lab4():
+    """Lab 4: Model is still lagging with validation accuracy.
+    We are increasing the size and variance of the data set to make model more robust by applying technique name - data augmentation.
+    """
     try:
-        """Lab 4: Model is still lagging with validation accuracy. 
-        We are increasing the size and variance of the data set to make model more robust by applying technique name - data augmentation.
-        """
         logging.info("LAB4. PREPARATION")
         device = get_device()
         train_df, valid_df = get_asl_data_set()
@@ -44,10 +45,10 @@ def lab4():
 
         valid_data = DataSetL3(
             base_df=valid_df,
-            device = device,
-            img_chs = IMG_CHS,
-            img_height = IMG_HEIGHT,
-            img_width = IMG_WIDTH
+            device=device,
+            img_chs=IMG_CHS,
+            img_height=IMG_HEIGHT,
+            img_width=IMG_WIDTH
         )
         valid_loader = DataLoader(
             dataset=valid_data,
@@ -62,7 +63,7 @@ def lab4():
 
         logging.info("performing data argumentation")
         row_0 = train_df.head(1)
-        y_0 = row_0.pop('label')
+        row_0.pop('label')
         x_0 = row_0.values / 255
         x_0 = x_0.reshape(IMG_CHS, IMG_WIDTH, IMG_HEIGHT)
         x_0 = torch.tensor(x_0)
@@ -81,6 +82,7 @@ def lab4():
         logging.error("Error in lab2: %s", e)
         raise
 
+
 def _get_layers() -> list[nn.Module]:
     flattened_img_size = 75 * 3 * 3
     return [
@@ -94,6 +96,7 @@ def _get_layers() -> list[nn.Module]:
         nn.ReLU(),
         nn.Linear(512, N_CLASSES)
     ]
+
 
 def _data_argumentation_exp(x_0: torch.Tensor):
     """This function is used to experiment with data argumentation techniques.

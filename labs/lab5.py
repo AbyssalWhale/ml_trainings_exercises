@@ -12,6 +12,7 @@ import torchvision.transforms.v2 as transforms
 
 IMG_WIDTH = 28
 IMG_HEIGHT = 28
+ALPHABET = "abcdefghiklmnopqrstuvwxy"
 
 def lab5():
     """Lab 5: Make predictions by using model trained in lab4 but new images that model has not seen yet.
@@ -23,11 +24,29 @@ def lab5():
         device = get_device()
         model = get_model(name="lab4_model.pth", device=device)
 
-        # preparing images
+        logging.info("preparing images")
         path_image_a, path_image_b = get_and_show_lab_images()
-
-        # scaling
         processed_image_a, processed_image_b = scale_and_show_image(path_image_a, path_image_b)
+
+        logging.info("making predictions")
+        # the squeeze removes dimensions of 1, unsqueeze adds a dimension of 1 at the index we specify.
+        # The first dimension is usually the batch dimension, so we can say .unsqueeze(0).
+        batched_image_a = processed_image_a.unsqueeze(0)
+        batched_image_b = processed_image_b.unsqueeze(0)
+
+        # putting on the same device
+        batched_image_model_a = batched_image_a.to(device)
+        batched_image_model_b = batched_image_b.to(device)
+
+        output_a = model(batched_image_model_a)
+        output_b = model(batched_image_model_b)
+
+        logging.info("understand predictions results by using alphabet %s", ALPHABET)
+        prediction_a = output_a.argmax(dim=1).item()
+        prediction_b = output_b.argmax(dim=1).item()
+
+        logging.info("prediction for image A: %s", ALPHABET[prediction_a])
+        logging.info("prediction for image B: %s", ALPHABET[prediction_b])
 
         pass
     except (RuntimeError, ValueError, TypeError) as e:

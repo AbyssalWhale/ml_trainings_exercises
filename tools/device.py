@@ -18,7 +18,7 @@ def get_device() -> torch.device:
     logging.info("Getting device. CUDA available: %s. Selected device: %s", cuda_available, device)
     return device
 
-def get_model(name: str, device) -> nn.Module:
+def get_model(name: str, device):
     path = os.path.join(get_model_saving_dir(), name)
     logging.info("trying to load model from path: %s", path)
     if not os.path.exists(path):

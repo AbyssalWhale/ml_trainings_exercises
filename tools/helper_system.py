@@ -43,6 +43,7 @@ def get_labs_data_saving_dir(lab_name: str) -> str:
 
     return lab_data_saving_dir
 
+
 def get_lab_data_path(lab_name: str, item_name: str) -> str:
     """
     return path to the directory where data is ready to use for lab or intended to be used for lab.
@@ -61,6 +62,7 @@ def get_lab_data_path(lab_name: str, item_name: str) -> str:
             "Make sure to run the lab preparation first."
         )
     return labs_data_dir
+
 
 def get_model_saving_dir() -> str:
     """

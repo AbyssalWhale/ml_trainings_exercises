@@ -1,5 +1,4 @@
 import logging
-import os.path
 
 import torch
 from tools.device import get_device, get_model
@@ -13,6 +12,7 @@ import torchvision.transforms.v2 as transforms
 IMG_WIDTH = 28
 IMG_HEIGHT = 28
 ALPHABET = "abcdefghiklmnopqrstuvwxy"
+
 
 def lab5():
     """Lab 5: Make predictions by using model trained in lab4 but new images that model has not seen yet.
@@ -53,6 +53,7 @@ def lab5():
         logging.error("Error in lab5: %s", e)
         raise
 
+
 def get_and_show_lab_images() -> tuple:
     logging.info("preparing images for inference")
     path_image_a = get_lab_data_path(lab_name="lab5", item_name="a.png")
@@ -70,6 +71,7 @@ def get_and_show_lab_images() -> tuple:
     plt.tight_layout()
     plt.show()
     return path_image_a, path_image_b
+
 
 def scale_and_show_image(path_image_a: str, path_image_b: str) -> tuple:
     logging.info("scaling the images to 28x28 pixels and converting to grayscale")
@@ -98,4 +100,4 @@ def scale_and_show_image(path_image_a: str, path_image_b: str) -> tuple:
     plt.tight_layout()
     plt.show()
 
-    return  processed_image_a, processed_image_b
+    return processed_image_a, processed_image_b

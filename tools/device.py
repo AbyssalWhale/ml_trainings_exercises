@@ -1,8 +1,6 @@
 import logging
 import os
-
 import torch
-from torch._C.cpp import nn
 
 from tools.helper_system import get_model_saving_dir
 
@@ -17,6 +15,7 @@ def get_device() -> torch.device:
     device = torch.device("cuda" if cuda_available else "cpu")
     logging.info("Getting device. CUDA available: %s. Selected device: %s", cuda_available, device)
     return device
+
 
 def get_model(name: str, device):
     path = os.path.join(get_model_saving_dir(), name)

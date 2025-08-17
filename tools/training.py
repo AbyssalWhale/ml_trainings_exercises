@@ -6,7 +6,6 @@ from torch import nn
 from torch.optim import Adam
 import torchvision.transforms.v2 as transforms
 
-
 def train_and_validate_model(
         epochs,
         model: nn.Module,
@@ -126,3 +125,4 @@ def get_batch_accuracy(output, y, N):
     pred = output.argmax(dim=1, keepdim=True)
     correct = pred.eq(y.view_as(pred)).sum().item()
     return correct / N
+

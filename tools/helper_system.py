@@ -43,6 +43,25 @@ def get_labs_data_saving_dir(lab_name: str) -> str:
 
     return lab_data_saving_dir
 
+def get_model_saving_dir() -> str:
+    """
+    Constructs the path to the directory where model data should be saved.
+
+    Args:
+        lab_name (str): The name of the lab.
+
+    Returns:
+        str: The absolute path to the lab's model saving directory.
+    """
+    project_dir = get_project_dir()
+    model_saving_dir = os.path.join(project_dir, "models", "saved")
+
+    if not os.path.exists(model_saving_dir):
+        os.makedirs(model_saving_dir)
+        logging.info("created directory for %s models: %s", lab_name, model_saving_dir)
+
+    return model_saving_dir
+
 
 def shut_down() -> None:
     """

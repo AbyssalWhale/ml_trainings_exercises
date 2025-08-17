@@ -1,13 +1,15 @@
 import logging
 
 import torch
+from PIL import Image
+import matplotlib.pyplot as plt
+
+import torchvision.io as tv_io
+import torchvision.transforms.functional as F
+import torchvision.transforms.v2 as transforms
+
 from tools.device import get_device, get_model
 from tools.helper_system import get_lab_data_path
-from PIL import Image
-import torchvision.transforms.functional as F
-import matplotlib.pyplot as plt
-import torchvision.io as tv_io
-import torchvision.transforms.v2 as transforms
 
 IMG_WIDTH = 28
 IMG_HEIGHT = 28
@@ -47,8 +49,6 @@ def lab5():
 
         logging.info("prediction for image A: %s", ALPHABET[prediction_a])
         logging.info("prediction for image B: %s", ALPHABET[prediction_b])
-
-        pass
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab5: %s", e)
         raise
@@ -59,7 +59,7 @@ def get_and_show_lab_images() -> tuple:
     path_image_a = get_lab_data_path(lab_name="lab5", item_name="a.png")
     path_image_b = get_lab_data_path(lab_name="lab5", item_name="b.png")
 
-    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    _, axes = plt.subplots(1, 2, figsize=(8, 4))
     axes[0].imshow(Image.open(path_image_a), cmap='gray')
     axes[0].set_title("Image means letter: A")
     axes[0].axis('off')

@@ -79,7 +79,7 @@ def get_model_saving_dir() -> str:
 
     if not os.path.exists(model_saving_dir):
         os.makedirs(model_saving_dir)
-        logging.info("created directory for %s models: %s", model_saving_dir)
+        logging.info("creating directory to save model: %s", model_saving_dir)
 
     return model_saving_dir
 

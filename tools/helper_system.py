@@ -1,6 +1,8 @@
 import logging
 import os
 from IPython import get_ipython
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 
 def get_project_dir() -> str:
@@ -44,7 +46,7 @@ def get_labs_data_saving_dir(lab_name: str) -> str:
     return lab_data_saving_dir
 
 
-def get_lab_data_path(lab_name: str, item_name: str) -> str:
+def get_lab_rts_data_path(lab_name: str, item_name: str) -> str:
     """
     return path to the directory where data is ready to use for lab or intended to be used for lab.
     Args:
@@ -62,6 +64,25 @@ def get_lab_data_path(lab_name: str, item_name: str) -> str:
             "Make sure to run the lab preparation first."
         )
     return labs_data_dir
+
+def get_lab_data_file_path(lab_name: str, item_name: str) -> str:
+    """
+    return path to the directory where data is ready to use for lab or intended to be used for lab.
+    Args:
+        item_name:
+        lab_name:
+    Returns:
+
+    """
+    project_dir = get_project_dir()
+    labs_data_dir = os.path.join(project_dir, "data", "labs_data", lab_name, item_name)
+    logging.info("getting path for lab data item %s", labs_data_dir)
+    if not os.path.exists(labs_data_dir):
+        raise FileNotFoundError(
+            f"Directory for lab {lab_name} does not exist: {labs_data_dir}. "
+            "Make sure to run the lab preparation first."
+        )
+    return  labs_data_dir
 
 
 def get_model_saving_dir() -> str:
@@ -82,6 +103,14 @@ def get_model_saving_dir() -> str:
         logging.info("creating directory to save model: %s", model_saving_dir)
 
     return model_saving_dir
+
+def show_image(image_path, title):
+    """ Displays an image using matplotlib."""
+    image = mpimg.imread(image_path)
+    plt.imshow(image)
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
 
 
 def shut_down() -> None:

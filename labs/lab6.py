@@ -1,10 +1,15 @@
 import logging
 
+import torch
 from PIL import Image
 from tools.device import get_device
 from torchvision.models import vgg16
 from torchvision.models import VGG16_Weights
-
+import torchvision.transforms.v2 as transforms
+import torchvision.io as tv_io
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import torchvision.transforms.functional as F
 
 from tools.helper_system import get_lab_data_file_path, show_image
 
@@ -20,18 +25,40 @@ def lab6():
         model = vgg16(weights=weights)
         model.to(device)
 
-        # getting model transforms
+        logging.info("transforming image to model input format")
         pre_trans = weights.transforms()
-
-        # loading image
-        show_image(
-            image_path=get_lab_data_file_path(lab_name="lab6", item_name="happy_dog.jpg"),
-            title="Happy Dog"
+        happy_dog_path = get_lab_data_file_path(lab_name="lab6", item_name="happy_dog.jpg")
+        processed_image = load_and_process_image(
+            device=device,
+            pre_trans=pre_trans,
+            file_path=happy_dog_path
         )
 
         pass
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab6: %s", e)
         raise
+
+
+def load_and_process_image(device, pre_trans, file_path):
+    # Print image's original shape, for reference
+    logging.info('original image shape %s', mpimg.imread(file_path).shape)
+    show_image(
+        image_path=file_path,
+        title="original image before processing"
+    )
+
+    image = tv_io.read_image(file_path).to(device)
+    image = pre_trans(image)  # weights.transforms()
+    image = image.unsqueeze(0)  # Turn into a batch
+    logging.info('processed image %s', image.shape)
+
+    plot_image = F.to_pil_image(torch.squeeze(image))
+    plt.title("processed image")
+    plt.imshow(plot_image, cmap='gray')
+    plt.axis('off')
+    plt.show()
+
+    return image
 
 

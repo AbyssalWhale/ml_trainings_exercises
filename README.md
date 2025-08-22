@@ -26,6 +26,11 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
   - 🔄 Includes random rotations, shifts, flips, and color adjustments
   - 📊 Visualizes original and augmented images for comparison
   - 🚀 Improves model robustness and generalization with augmented training data
+- **Lab 5**
+  - 🖼️ Loads and displays two sample images (a.png and b.png) from the lab5 dataset
+  - 🔍 Demonstrates image loading and visualization using matplotlib
+  - 📊 Shows both images side-by-side in a single plot for easy comparison
+  - 📝 Useful for understanding image data handling and visualization in ML workflows
 
 ## 🏁 Getting Started
 1. ⬇️ Clone the repository.
@@ -53,6 +58,7 @@ labs/                  # All labs
   lab2.py              # Lab 2: MNIST data visualization and exploration
   lab3.py              # Lab 3: ASL data preprocessing and CNN training
   lab4.py              # Lab 4: Data augmentation for ASL CNN (image transformations, visualization)
+  lab5.py              # Lab 5: Image loading and visualization examples
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils
@@ -82,6 +88,11 @@ data/                  # data storage
 - Applies image augmentation techniques (rotation, crop, flip, color jitter)
 - Visualizes original and augmented images side-by-side
 - Integrates augmentation into training pipeline for improved robustness
+
+### Lab 5: Image Loading and Visualization Examples
+- Demonstrates loading and displaying images using matplotlib
+- Provides side-by-side comparison of original and augmented images
+- Aids in understanding image data handling in machine learning
 
 ## 🤝 Contributing
 - ✨ Follow code style and documentation rules

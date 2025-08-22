@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 import torch
 from torch.utils.data import DataLoader
@@ -10,6 +11,7 @@ from models.data.data_set import DataSetL3
 from models.nn.custom_cnn_layers_l4 import CustomCNNLayersL4
 from tools.data import get_asl_data_set
 from tools.device import get_device
+from tools.helper_system import get_model_saving_dir
 from tools.training import train_and_validate_model
 
 IMG_HEIGHT = 28
@@ -78,8 +80,9 @@ def lab4():
             loss_function=loss_function,
             random_transforms=random_transforms
         )
+        torch.save(base_model, os.path.join(get_model_saving_dir(), 'lab4_model.pth'))
     except (RuntimeError, ValueError, TypeError) as e:
-        logging.error("Error in lab2: %s", e)
+        logging.error("Error in lab4: %s", e)
         raise
 
 

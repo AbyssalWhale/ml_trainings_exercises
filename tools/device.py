@@ -1,5 +1,8 @@
 import logging
+import os
 import torch
+
+from tools.helper_system import get_model_saving_dir
 
 
 def get_device() -> torch.device:
@@ -12,3 +15,11 @@ def get_device() -> torch.device:
     device = torch.device("cuda" if cuda_available else "cpu")
     logging.info("Getting device. CUDA available: %s. Selected device: %s", cuda_available, device)
     return device
+
+
+def get_model(name: str, device):
+    path = os.path.join(get_model_saving_dir(), name)
+    logging.info("trying to load model from path: %s", path)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Model file not found in path: {path}")
+    return torch.load(path, map_location=device, weights_only=False)

@@ -6,7 +6,7 @@ from PIL import Image
 from tools.device import get_device
 from torchvision.models import vgg16
 from torchvision.models import VGG16_Weights
-import torchvision.transforms.v2 as transforms
+import numpy as np
 import torchvision.io as tv_io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -36,6 +36,8 @@ def lab6():
         )
 
         # loading a list of classes (for all images) to interpret model output
+        brown_bear_path = get_lab_data_file_path(lab_name="lab6", item_name="brown_bear.jpg")
+        sleepy_cat_path = get_lab_data_file_path(lab_name="lab6", item_name="sleepy_cat.jpg")
         vgg_classes = json.load(open(get_item_from_data_dir(name="imagenet_class_index.json")))
         readable_prediction(
             device=device,
@@ -48,15 +50,34 @@ def lab6():
             device=device,
             pre_trans=pre_trans,
             model=model,
-            image_path=get_lab_data_file_path(lab_name="lab6", item_name="brown_bear.jpg"),
+            image_path=brown_bear_path,
             vgg_classes=vgg_classes
         )
         readable_prediction(
             device=device,
             pre_trans=pre_trans,
             model=model,
-            image_path=get_lab_data_file_path(lab_name="lab6", item_name="sleepy_cat.jpg"),
+            image_path=sleepy_cat_path,
             vgg_classes=vgg_classes
+        )
+
+        doggy_door(
+            device=device,
+            model=model,
+            pre_trans=pre_trans,
+            image_path=brown_bear_path
+        )
+        doggy_door(
+            device=device,
+            model=model,
+            pre_trans=pre_trans,
+            image_path=happy_dog_path
+        )
+        doggy_door(
+            device=device,
+            model=model,
+            pre_trans=pre_trans,
+            image_path=sleepy_cat_path
         )
 
         pass
@@ -120,4 +141,21 @@ def readable_prediction(
     logging.info("predictions results: %s", out_str)
 
     return predictions
+
+def doggy_door(device, model, pre_trans, image_path):
+    logging.info("prediction if image is dog or not: %s", image_path)
+    show_image(image_path=image_path, title="image to check if dog or not")
+    image = load_and_process_image(
+        device=device,
+        pre_trans=pre_trans,
+        file_path=image_path
+    )
+    idx = model(image).argmax(dim=1).item()
+    logging.info("Predicted index:", idx)
+    if 151 <= idx <= 268:
+        logging.info("Doggy come on in!")
+    elif 281 <= idx <= 285:
+        logging.info("Kitty stay inside!")
+    else:
+        logging.info("You're not a dog! Stay outside!")
 

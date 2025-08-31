@@ -24,6 +24,18 @@ def get_project_dir() -> str:
     logging.info("Project root directory found: %s", current_dir)
     return current_dir
 
+def get_item_from_data_dir(name: str) -> str:
+    """
+    Constructs the path to the main data directory.
+
+    Returns:
+        str: The absolute path to the main data directory.
+    """
+    project_dir = get_project_dir()
+    data_dir = os.path.join(project_dir, "data", name)
+
+    return data_dir
+
 
 def get_labs_data_saving_dir(lab_name: str) -> str:
     """

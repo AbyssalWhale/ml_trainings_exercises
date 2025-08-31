@@ -1,3 +1,4 @@
+import json
 import logging
 
 import torch
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import torchvision.transforms.functional as F
 
-from tools.helper_system import get_lab_data_file_path, show_image
+from tools.helper_system import get_lab_data_file_path, show_image, get_item_from_data_dir
 
 
 def lab6():
@@ -34,13 +35,41 @@ def lab6():
             file_path=happy_dog_path
         )
 
+        # loading a list of classes (for all images) to interpret model output
+        vgg_classes = json.load(open(get_item_from_data_dir(name="imagenet_class_index.json")))
+        readable_prediction(
+            device=device,
+            pre_trans=pre_trans,
+            model=model,
+            image_path=happy_dog_path,
+            vgg_classes=vgg_classes
+        )
+        readable_prediction(
+            device=device,
+            pre_trans=pre_trans,
+            model=model,
+            image_path=get_lab_data_file_path(lab_name="lab6", item_name="brown_bear.jpg"),
+            vgg_classes=vgg_classes
+        )
+        readable_prediction(
+            device=device,
+            pre_trans=pre_trans,
+            model=model,
+            image_path=get_lab_data_file_path(lab_name="lab6", item_name="sleepy_cat.jpg"),
+            vgg_classes=vgg_classes
+        )
+
         pass
     except (RuntimeError, ValueError, TypeError) as e:
         logging.error("Error in lab6: %s", e)
         raise
 
 
-def load_and_process_image(device, pre_trans, file_path):
+def load_and_process_image(
+        device,
+        pre_trans,
+        file_path
+):
     # Print image's original shape, for reference
     logging.info('original image shape %s', mpimg.imread(file_path).shape)
     show_image(
@@ -61,4 +90,34 @@ def load_and_process_image(device, pre_trans, file_path):
 
     return image
 
+def readable_prediction(
+        device,
+        pre_trans,
+        model,
+        image_path,
+        vgg_classes
+):
+    logging.info("Making predictions for image: %s", image_path)
+    # Show image
+    show_image(
+        image_path=image_path,
+        title="image for prediction"
+    )
+    # Load and pre-process image
+    image = load_and_process_image(
+        device=device,
+        pre_trans=pre_trans,
+        file_path=image_path
+    )
+    # Make predictions
+    output = model(image)[0]  # Unbatch
+    predictions = torch.topk(output, 3)
+    indices = predictions.indices.tolist()
+    # Print predictions in readable form
+    out_str = "Top results: "
+    pred_classes = [vgg_classes[str(idx)][1] for idx in indices]
+    out_str += ", ".join(pred_classes)
+    logging.info("predictions results: %s", out_str)
+
+    return predictions
 

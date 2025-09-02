@@ -18,16 +18,16 @@ logging.basicConfig(
 
 def main():
     try:
-        lab1()
-        shut_down()
-        lab2()
-        shut_down()
-        lab3()
-        shut_down()
-        lab4()
-        shut_down()
-        lab5()
-        shut_down()
+        # lab1()
+        # shut_down()
+        # lab2()
+        # shut_down()
+        # lab3()
+        # shut_down()
+        # lab4()
+        # shut_down()
+        # lab5()
+        # shut_down()
         lab6()
     finally:
         shut_down()

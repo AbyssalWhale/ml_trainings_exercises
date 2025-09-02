@@ -9,7 +9,7 @@ import torchvision.transforms.functional as F
 import torchvision.transforms.v2 as transforms
 
 from tools.device import get_device, get_model
-from tools.helper_system import get_lab_data_path
+from tools.helper_system import get_lab_rts_data_path
 
 IMG_WIDTH = 28
 IMG_HEIGHT = 28
@@ -56,8 +56,8 @@ def lab5():
 
 def get_and_show_lab_images() -> tuple:
     logging.info("preparing images for inference")
-    path_image_a = get_lab_data_path(lab_name="lab5", item_name="a.png")
-    path_image_b = get_lab_data_path(lab_name="lab5", item_name="b.png")
+    path_image_a = get_lab_rts_data_path(lab_name="lab5", item_name="a.png")
+    path_image_b = get_lab_rts_data_path(lab_name="lab5", item_name="b.png")
 
     _, axes = plt.subplots(1, 2, figsize=(8, 4))
     axes[0].imshow(Image.open(path_image_a), cmap='gray')

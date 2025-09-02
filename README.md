@@ -31,6 +31,11 @@ Welcome to the **MNIST PyTorch Training Project**! This repository showcases a c
   - 🔍 Demonstrates image loading and visualization using matplotlib
   - 📊 Shows both images side-by-side in a single plot for easy comparison
   - 📝 Useful for understanding image data handling and visualization in ML workflows
+- **Lab 6**
+  - 🐶 Loads a pretrained VGG16 model for image classification
+  - 🖼️ Processes and classifies sample images
+  - 📊 Visualizes model predictions and interprets results
+  - 📝 Demonstrates transfer learning and model inference with PyTorch
 
 ## 🏁 Getting Started
 1. ⬇️ Clone the repository.
@@ -59,6 +64,7 @@ labs/                  # All labs
   lab3.py              # Lab 3: ASL data preprocessing and CNN training
   lab4.py              # Lab 4: Data augmentation for ASL CNN (image transformations, visualization)
   lab5.py              # Lab 5: Image loading and visualization examples
+  lab6.py              # Lab 6: Transfer learning with pretrained VGG16 model
 tools/                 # Utilities
   data.py              # Data loading utils
   device.py            # Device selection utils
@@ -93,6 +99,12 @@ data/                  # data storage
 - Demonstrates loading and displaying images using matplotlib
 - Provides side-by-side comparison of original and augmented images
 - Aids in understanding image data handling in machine learning
+
+### Lab 6: Transfer Learning with Pretrained VGG16 Model
+- Utilizes a pretrained VGG16 model for image classification
+- Processes and classifies sample images (e.g., happy_dog.jpg)
+- Visualizes model predictions and interprets results
+- Demonstrates transfer learning and model inference with PyTorch
 
 ## 🤝 Contributing
 - ✨ Follow code style and documentation rules

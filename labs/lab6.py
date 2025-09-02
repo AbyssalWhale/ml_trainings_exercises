@@ -2,11 +2,9 @@ import json
 import logging
 
 import torch
-from PIL import Image
 from tools.device import get_device
 from torchvision.models import vgg16
 from torchvision.models import VGG16_Weights
-import numpy as np
 import torchvision.io as tv_io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -29,11 +27,6 @@ def lab6():
         logging.info("transforming image to model input format")
         pre_trans = weights.transforms()
         happy_dog_path = get_lab_data_file_path(lab_name="lab6", item_name="happy_dog.jpg")
-        processed_image = load_and_process_image(
-            device=device,
-            pre_trans=pre_trans,
-            file_path=happy_dog_path
-        )
 
         # loading a list of classes (for all images) to interpret model output
         brown_bear_path = get_lab_data_file_path(lab_name="lab6", item_name="brown_bear.jpg")
@@ -111,6 +104,7 @@ def load_and_process_image(
 
     return image
 
+
 def readable_prediction(
         device,
         pre_trans,
@@ -142,6 +136,7 @@ def readable_prediction(
 
     return predictions
 
+
 def doggy_door(device, model, pre_trans, image_path):
     logging.info("prediction if image is dog or not: %s", image_path)
     show_image(image_path=image_path, title="image to check if dog or not")
@@ -158,4 +153,3 @@ def doggy_door(device, model, pre_trans, image_path):
         logging.info("Kitty stay inside!")
     else:
         logging.info("You're not a dog! Stay outside!")
-

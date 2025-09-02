@@ -24,6 +24,7 @@ def get_project_dir() -> str:
     logging.info("Project root directory found: %s", current_dir)
     return current_dir
 
+
 def get_item_from_data_dir(name: str) -> str:
     """
     Constructs the path to the main data directory.
@@ -77,6 +78,7 @@ def get_lab_rts_data_path(lab_name: str, item_name: str) -> str:
         )
     return labs_data_dir
 
+
 def get_lab_data_file_path(lab_name: str, item_name: str) -> str:
     """
     return path to the directory where data is ready to use for lab or intended to be used for lab.
@@ -94,7 +96,7 @@ def get_lab_data_file_path(lab_name: str, item_name: str) -> str:
             f"Directory for lab {lab_name} does not exist: {labs_data_dir}. "
             "Make sure to run the lab preparation first."
         )
-    return  labs_data_dir
+    return labs_data_dir
 
 
 def get_model_saving_dir() -> str:
@@ -115,6 +117,7 @@ def get_model_saving_dir() -> str:
         logging.info("creating directory to save model: %s", model_saving_dir)
 
     return model_saving_dir
+
 
 def show_image(image_path, title):
     """ Displays an image using matplotlib."""

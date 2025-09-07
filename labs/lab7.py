@@ -4,8 +4,8 @@ from transformers import BertTokenizer, BertForMaskedLM, BertForQuestionAnswerin
 
 
 def lab7():
+    """Lab 7: NLP with text by using BERT model."""
     try:
-        """Lab 7: NLP with text by using BERT model."""
         logging.info("LAB7. PREPARATION")
         logging.info("loading BERT model and tokenizer")
         tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
@@ -13,16 +13,19 @@ def lab7():
         text_2 = "What kind of equations do I understand?"
         indexed_tokens = tokenizer.encode(text_1, text_2, add_special_tokens=True)
         logging.info("our sentences to tokenize \nT1: %s \nT2: %s", text_1, text_2)
+        # Ensure indexed_tokens is a list of ints for convert_ids_to_tokens
         logging.info("tokenized and indexed tokens: %s", indexed_tokens)
-        logging.info("converted tokens back to text to see what used as tokens: %s", tokenizer.convert_ids_to_tokens([str(token) for token in indexed_tokens]))
-        logging.info("We have more tokens/words because many languages have word roots, or components that make up a word. "
+        logging.info("converted tokens back to text to see what used as tokens: %s",
+                     tokenizer.convert_ids_to_tokens(indexed_tokens))
+        logging.info("We have more tokens/words because many languages have word roots, "
+                     "or components that make up a word. "
                      "\nFor instance, the word 'quadratic' has the root 'quadr' which means '4' ")
         logging.info("looking for segment_ids for BART")
         # BERT need to know segment_ids. We can use `special_tokens` added by `tokenizer` to fine them
         segments_tensors, tokens_tensor = get_segment_ids(indexed_tokens)
         logging.info("Text Masking")
         masked_index = 5
-        indexed_tokens[masked_index] = tokenizer.mask_token_id
+        indexed_tokens[masked_index] = tokenizer.mask_token_id # pylint: disable=no-member
         tokens_tensor = torch.tensor([indexed_tokens])
         logging.info("applied test masking result: %s", tokenizer.decode(indexed_tokens))
         logging.info("loading model than used to predict missing words")
@@ -36,7 +39,8 @@ def lab7():
         logging.info("predicted token by model: %s", predicted_token)
 
         logging.info("example of another BERT version with own tokenizer")
-        question_answering_tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+        model_name = 'bert-large-uncased-whole-word-masking-finetuned-squad'
+        question_answering_tokenizer = BertTokenizer.from_pretrained(model_name)
         indexed_tokens = question_answering_tokenizer.encode(text_1, text_2, add_special_tokens=True)
         segments_tensors, tokens_tensor = get_segment_ids(indexed_tokens)
         question_answering_model = BertForQuestionAnswering.from_pretrained(
@@ -45,8 +49,14 @@ def lab7():
             out = question_answering_model(tokens_tensor, token_type_ids=segments_tensors)
         answer_sequence = indexed_tokens[torch.argmax(out.start_logits):torch.argmax(out.end_logits) + 1]
         logging.info("predicted tokens: %s", answer_sequence)
-        logging.info("decoded prediction words by tokens: %s", question_answering_tokenizer.convert_ids_to_tokens(answer_sequence))
-        logging.info("decoded prediction by tokens sum as single word: %s", question_answering_tokenizer.decode(answer_sequence))
+        logging.info(
+            "decoded prediction words by tokens: %s",
+            question_answering_tokenizer.convert_ids_to_tokens(answer_sequence)
+        )
+        logging.info(
+            "decoded prediction by tokens sum as single word: %s",
+            question_answering_tokenizer.decode(answer_sequence)
+        )
 
     except Exception as e:
         logging.error("Error in lab7: %s", e)

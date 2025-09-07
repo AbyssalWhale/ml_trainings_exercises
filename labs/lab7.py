@@ -1,6 +1,7 @@
 import logging
 import torch
-from transformers import BertTokenizer, BertModel, BertForMaskedLM, BertForQuestionAnswering
+from transformers import BertTokenizer, BertForMaskedLM, BertForQuestionAnswering
+
 
 def lab7():
     try:
@@ -50,6 +51,7 @@ def lab7():
     except Exception as e:
         logging.error("Error in lab7: %s", e)
         raise
+
 
 def get_segment_ids(indexed_tokens, sep_token=102):
     logging.info("Next, we can create a for loop. We'll start with our segment_id set to 0, "

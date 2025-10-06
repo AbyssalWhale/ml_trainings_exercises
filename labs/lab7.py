@@ -25,7 +25,8 @@ def lab7():
         segments_tensors, tokens_tensor = get_segment_ids(indexed_tokens)
         logging.info("Text Masking")
         masked_index = 5
-        indexed_tokens[masked_index] = tokenizer.mask_token_id # pylint: disable=no-member
+        # pylint: disable=no-member
+        indexed_tokens[masked_index] = tokenizer.mask_token_id
         tokens_tensor = torch.tensor([indexed_tokens])
         logging.info("applied test masking result: %s", tokenizer.decode(indexed_tokens))
         logging.info("loading model than used to predict missing words")
